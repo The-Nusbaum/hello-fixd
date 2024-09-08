@@ -7,4 +7,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  resources :posts, only: %w[create update show destroy]
+  resources :comments, only: %w[create update show destroy]
+  resources :ratings, only: %w[create update show destroy]
+  resources :api_keys, path: 'api-keys', only: %i[index create destroy] 
 end
