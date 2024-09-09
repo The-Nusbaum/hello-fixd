@@ -5,9 +5,9 @@ class CrudController < ApplicationController
   
   def create
     @object = klass.new(object_create_params)
-    @object.save
-
     set_object_user
+    
+    @object.save
 
     render json: @object, status: :created and return if @object.valid?
       

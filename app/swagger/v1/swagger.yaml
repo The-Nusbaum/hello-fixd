@@ -32,6 +32,29 @@ paths:
       responses:
         '204':
           description: successful
+  "/comments":
+    post:
+      summary: create comment
+      security:
+      - bearer: []
+      parameters:
+      - name: comment[message]
+        in: query
+        description: message
+        schema:
+          type: string
+      - name: comment[post_id]
+        in: query
+        description: post_id
+        schema:
+          type: number
+      responses:
+        '201':
+          description: successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/definitions/comment"
   "/comments/{id}":
     parameters:
     - name: id
@@ -124,6 +147,29 @@ paths:
                 "$ref": "#/definitions/feed"
         '401':
           description: without credentials, unsuccessful
+  "/posts":
+    post:
+      summary: create post
+      security:
+      - bearer: []
+      parameters:
+      - name: post[title]
+        in: query
+        description: Title
+        schema:
+          type: string
+      - name: post[body]
+        in: query
+        description: Body
+        schema:
+          type: string
+      responses:
+        '201':
+          description: successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/definitions/post"
   "/posts/{id}":
     parameters:
     - name: id
@@ -168,6 +214,29 @@ paths:
           description: no content
         '403':
           description: not authorized when different user
+  "/ratings":
+    post:
+      summary: create rating
+      security:
+      - bearer: []
+      parameters:
+      - name: rating[user_id]
+        in: query
+        description: Title
+        schema:
+          type: number
+      - name: rating[rating]
+        in: query
+        description: Body
+        schema:
+          type: string
+      responses:
+        '201':
+          description: successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/definitions/rating"
   "/ratings/{id}":
     parameters:
     - name: id
@@ -282,6 +351,42 @@ definitions:
       message:
         type: string
       commented_at:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+  rating:
+    type: object
+    properties:
+      id:
+        type: number
+      user_id:
+        type: number
+      rater_id:
+        type: number
+      rating:
+        type: number
+      rated_at:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+  post:
+    type: object
+    properties:
+      id:
+        type: number
+      post_id:
+        type: number
+      user_id:
+        type: number
+      title:
+        type: string
+      body:
+        type: string
+      posted_at:
         type: string
       created_at:
         type: string

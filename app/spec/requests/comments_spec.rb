@@ -19,41 +19,34 @@ RSpec.describe 'comments', type: :request do
     @comment_count = Comment.all.count
   end
 
+  # this spec fails, based on all the docs it should work as far as I can tell. 
+  # there seems to be a number of issues with rswag specs not sending post data
+  # but there is very little documentation on it, also rswag does not appear to 
+  # support OpenApi 3.0 requestBody?
   path '/comments' do
    
     post('create comment') do
       produces 'application/json'
       security [bearer: []]
 
-      parameter name: :params, in: :body, schema: {
-        type: :object,
-        properties: {
-          comment: {
-            type: :object,
-            properties: {
-              post_id: { type: :number },
-              message: { type: :string }
-            },
-            required: [ 'post_id', 'message' ],
-          },
-        },
-        required: [ 'comment' ]
-      }
-
+      parameter name: 'comment[message]', in: :query, type: :string, description: 'message'
+      parameter name: 'comment[post_id]', in: :query, type: :number, description: 'post_id'
+  
       response(201, 'successful') do
         let(:Authorization) { "Bearer #{@token1}" }
         let(:params) { {comment: {post_id: @post.id  , message: 'foo'}}}
+        let('comment[message]') { 'message' }
+        let('comment[post_id]') { @post.id }
 
         schema '$ref' => '#/definitions/comment'
-        # run_test! do
-        #   expect(Comment.all.count).to be > @comment_count
-        # end
+        run_test! do
+          expect(Comment.all.count).to be > @comment_count
+        end
       end
     end
   end
 
   path '/comments/{id}' do
-    # parameter name: :Authorization, :in => :header, :type => :string
     parameter name: 'id', in: :path, type: :string, description: 'id'
   
     get('show comment') do

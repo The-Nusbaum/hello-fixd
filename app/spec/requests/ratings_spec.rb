@@ -26,29 +26,18 @@ RSpec.describe 'ratings', type: :request do
       produces 'application/json'
       security [bearer: []]
 
-      parameter name: :params, in: :body, schema: {
-        type: :object,
-        properties: {
-          rating: {
-            type: :object,
-            properties: {
-              user_id: { type: :number },
-              message: { type: :string }
-            },
-            required: [ 'user_id', 'message' ],
-          },
-        },
-        required: [ 'rating' ]
-      }
+      parameter name: 'rating[user_id]', in: :query, type: :number, description: 'Title'
+      parameter name: 'rating[rating]', in: :query, type: :string, description: 'Body'
 
       response(201, 'successful') do
         let(:Authorization) { "Bearer #{@token_u}" }
-        let(:params) { {rating: {rater_id: @rater.id  , rating: rand(1..5)}}}
+        let('rating[user_id]') { @user.id }
+        let('rating[rating]') { 5 }
 
         schema '$ref' => '#/definitions/rating'
-        # run_test! do
-        #   expect(Rating.all.count).to be > @rating_count
-        # end
+        run_test! do
+          expect(Rating.all.count).to be > @rating_count
+        end
       end
     end
   end

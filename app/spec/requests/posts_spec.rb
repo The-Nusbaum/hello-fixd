@@ -26,30 +26,19 @@ RSpec.describe 'posts', type: :request do
     post('create post') do
       produces 'application/json'
       security [bearer: []]
-
-      parameter name: :params, in: :body, schema: {
-        type: :object,
-        properties: {
-          post: {
-            type: :object,
-            properties: {
-              title: { type: :number },
-              body: { type: :string }
-            },
-            required: [ 'post', 'body' ],
-          },
-        },
-        required: [ 'post' ]
-      }
-
+      
+      parameter name: 'post[title]', in: :query, type: :string, description: 'Title'
+      parameter name: 'post[body]', in: :query, type: :string, description: 'Body'
+      
       response(201, 'successful') do
         let(:Authorization) { "Bearer #{@token1}" }
-        let(:params) { {post: {title: 'updated title'  , body: 'updated body'}}}
+        let('post[title]') { 'title' }
+        let('post[body]') { 'body' }
 
         schema '$ref' => '#/definitions/post'
-        # run_test! do
-        #   expect(Post.all.count).to be > @post_count
-        # end
+        run_test! do
+          expect(Post.all.count).to be > @post_count
+        end
       end
     end
   end
