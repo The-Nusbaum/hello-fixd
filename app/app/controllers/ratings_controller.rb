@@ -4,6 +4,14 @@ class RatingsController < CrudController
   end
 
   def object_create_params
-    params.require(:rating).permit(:user_id, :rater_id, :rating)
+    params.require(:rating).permit(:rater_id, :rating)
+  end
+
+  def set_object_user
+    @object.rater = current_user
+  end
+
+  def forbid_third_party
+    head :forbidden unless @object.rater == current_user
   end
 end

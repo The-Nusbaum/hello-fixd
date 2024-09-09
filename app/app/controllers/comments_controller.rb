@@ -4,6 +4,14 @@ class CommentsController < CrudController
   end
 
   def object_create_params
-    params.require(:comment).permit(:post_id, :user_id ,:message)
+    params.require(:comment).permit(:post_id, :message)
+  end
+
+  def set_object_user
+    @object.user = current_user
+  end
+
+  def forbid_third_party
+    head :forbidden unless @object.user == current_user
   end
 end

@@ -1,0 +1,156 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api-keys":
+    post:
+      summary: create api_key
+      security:
+      - basic: []
+      responses:
+        '201':
+          description: with credentials, successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/definitions/api_key"
+        '401':
+          description: without credentials, unsuccessful
+  "/api-keys/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    delete:
+      summary: delete api_key
+      security:
+      - bearer: []
+      responses:
+        '204':
+          description: successful
+  "/comments/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show comment
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: successful
+    patch:
+      summary: update comment
+      security:
+      - bearer: []
+      parameters:
+      - name: comment[message]
+        in: query
+        description: message
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+        '403':
+          description: forbidden when different user
+    delete:
+      summary: delete comment
+      security:
+      - bearer: []
+      responses:
+        '204':
+          description: no content
+        '403':
+          description: not authorized when different user
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000
+components:
+  securitySchemes:
+    basic:
+      description: Use with POST /api-keys to fetch a token
+      type: http
+      scheme: basic
+    bearer:
+      description: token from POST /api-keys
+      type: http
+      scheme: bearer
+api_key:
+  type: object
+  properties:
+    id:
+      type: number
+    user_id:
+      type: number
+    token_digest:
+      type: string
+    created_at:
+      type: string
+    updated_at:
+      type: string
+    token:
+      type: string
+api_key_collection:
+  type: array
+  items:
+    type: api_key
+feed_event:
+  type: object
+  properties:
+    id:
+      type: number
+    event_type:
+      type: string
+    title:
+      type: string
+    body:
+      type: string
+    comment_count:
+      type: number
+    link:
+      type: string
+    date:
+      type: string
+feed:
+  type: object
+  properties:
+    user:
+      type: string
+    feed_events:
+      type: array
+      items:
+        type: feed_event
+    page:
+      type: number
+    total_records:
+      type: number
+    last_page:
+      type: boolean
+comment:
+  type: object
+  properties:
+    id:
+      type: number
+    post_id:
+      type: number
+    user_id:
+      type: number
+    message:
+      type: string
+    commented_at:
+      type: string
+    created_at:
+      type: string
+    updated_at:
+      type: string

@@ -1,10 +1,13 @@
 class CrudController < ApplicationController
   before_action :set_object, only: %w[update show destroy]
   prepend_before_action :authenticate_with_key!, only: %w(create update show destroy)
+  before_action :forbid_third_party, only: %w[update destroy]
   
   def create
     @object = klass.new(object_create_params)
     @object.save
+
+    set_object_user
 
     render json: @object, status: :created and return if @object.valid?
       
@@ -45,4 +48,13 @@ class CrudController < ApplicationController
   def object_create_params
     #implement in individual controllers
   end
+
+  def set_object_user
+    #implement if neccesary
+  end
+
+  def forbid_third_party
+    #implement in individual controllers
+    head :not_implemented
+   end
 end
