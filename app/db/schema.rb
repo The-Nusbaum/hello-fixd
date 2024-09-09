@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_08_234203) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_09_000437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "api_keys", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "token_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["token_digest"], name: "index_api_keys_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_api_keys_on_user_id"
+  end
 
   create_table "comments", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -50,7 +59,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_08_234203) do
     t.string "email", null: false
     t.string "name", null: false
     t.string "github_username"
-    t.string "password"
+    t.string "password_digest"
     t.datetime "registered_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

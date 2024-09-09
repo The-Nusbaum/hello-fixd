@@ -1,5 +1,6 @@
 class CrudController < ApplicationController
   before_action :set_object, only: %w[update show destroy]
+  prepend_before_action :authenticate_with_key!, only: %w(create update show destroy)
   
   def create
     @object = klass.new(object_create_params)
