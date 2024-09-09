@@ -85,7 +85,49 @@ class FeedService
   end
 
   def _github
-    #TODO: this
+    #TODO: cache this, perhaps offload it somewhere. potentially blocking
+    response = ::HTTParty.get("https://api.github.com/users/#{@user.github_username}/events/public?per_page=100")
+
+    return unless response.code == 200
+
+    acceptable_types = %w[CreateEvent PullRequestEvent PushEvent]
+
+    events = response.parsed_response.map do |event|
+      link = event["repo"]["url"]
+      body = event["repo"]["name"]
+
+      case event["type"]
+      when "CreateEvent"
+        next unless event["payload"]["reftype"] == "repository"
+        title = "Created a Repository"
+      when "PushEvent"
+        if event["payload"]["size"] > 1
+          title = "Pushed #{event["payload"]["size"]} commits to"
+        else
+          title = "Pushed a commit to"
+        end
+      when "PullRequestEvent"
+        link = event["payload"]["pull_request"]["link"]
+        if event["payload"]["action"] == "closed" && event["payload"]["pull_request"]["merged"]
+          title = "Merged \##{event["payload"]["number"]} into"
+        elsif event["payload"]["action"] == "opened"
+          title = "Opened a new Pull Request \##{event["payload"]["number"]} for"
+        else
+          next
+        end    
+      else
+        next
+      end
+
+      @events << _format_event(
+        id: event["id"],
+        event_type: :github,
+        title: title,
+        body: body,
+        link: link, 
+        date: DateTime.iso8601(event["created_at"])
+      )
+    end
   end
 
   def _format_event(id:, event_type:, title:, body: nil, comment_count: nil, link: nil, date:)

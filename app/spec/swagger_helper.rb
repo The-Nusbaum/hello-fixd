@@ -46,62 +46,85 @@ RSpec.configure do |config|
           }
         }
       },
-      api_key: {
-        type: :object,
-        properties: {
-          id: {type: :number},
-          user_id: {type: :number},
-          token_digest: {type: :string},
-          created_at: {type: :string},
-          updated_at: {type: :string},
-          token: {type: :string}
+      definitions: {
+
+        api_key: {
+          type: :object,
+          properties: {
+            id: {type: :number},
+            user_id: {type: :number},
+            token_digest: {type: :string},
+            created_at: {type: :string},
+            updated_at: {type: :string},
+            token: {type: :string}
+          }
+        },
+        feed_event: {
+          type: :object,
+          properties: {
+            id: {type: :number},
+            event_type: {type: :string},
+            title: {type: :string},
+            body: {type: :string},
+            comment_count: {type: :number},
+            link: {type: :string},
+            date: {type: :string},
+          }
+        },
+        feed: {
+          type: :object,
+          properties: {
+            user: {type: :string},
+            feed_events: {
+              type: :array,
+              items: {
+                type: :feed_event
+              }
+            },
+            page: {type: :number},
+            total_records: {type: :number},
+            last_page: {type: :boolean}
+          }
+        },
+        comment: {
+          type: :object,
+          properties: {
+            id: {type: :number},
+            post_id: {type: :number},
+            user_id: {type: :number},
+            message: {type: :string},
+            commented_at: {type: :string},
+            created_at: {type: :string},
+            updated_at: {type: :string},
+          }
+        },
+        rating: {
+          type: :object,
+          properties: {
+            id: {type: :number},
+            user_id: {type: :number},
+            rater_id: {type: :number},
+            rating: {type: :number},
+            rated_at: {type: :string},
+            created_at: {type: :string},
+            updated_at: {type: :string},
+          }
+          
+        },
+        post: {
+          type: :object,
+          properties: {
+            id: {type: :number},
+            post_id: {type: :number},
+            user_id: {type: :number},
+            title: {type: :string},
+            body: {type: :string},
+            posted_at: {type: :string},
+            created_at: {type: :string},
+            updated_at: {type: :string},
+          }
         }
-      },
-      api_key_collection: {
-        type: :array,
-        items: {
-          type: :api_key
-        }
-      },
-      feed_event: {
-        type: :object,
-        properties: {
-          id: {type: :number},
-          event_type: {type: :string},
-          title: {type: :string},
-          body: {type: :string},
-          comment_count: {type: :number},
-          link: {type: :string},
-          date: {type: :string},
-        }
-      },
-      feed: {
-        type: :object,
-        properties: {
-          user: {type: :string},
-          feed_events: {
-            type: :array,
-            items: {
-              type: :feed_event
-            }
-          },
-          page: {type: :number},
-          total_records: {type: :number},
-          last_page: {type: :boolean}
-        }
-      },
-      comment: {
-        type: :object,
-        properties: {
-          id: {type: :number},
-          post_id: {type: :number},
-          user_id: {type: :number},
-          message: {type: :string},
-          commented_at: {type: :string},
-          created_at: {type: :string},
-          updated_at: {type: :string},
-        }
-      },
+      }
     }
   }
 

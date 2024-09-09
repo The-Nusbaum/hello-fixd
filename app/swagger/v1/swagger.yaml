@@ -71,6 +71,142 @@ paths:
           description: no content
         '403':
           description: not authorized when different user
+  "/":
+    parameters:
+    - name: page
+      in: query
+      description: Page. defaults to 1
+      schema:
+        type: number
+    - name: per
+      in: query
+      description: Per Page. defaults to 15
+      schema:
+        type: number
+    get:
+      summary: current user feed
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: with credentials, successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/definitions/feed"
+  "/feed/{user_id}":
+    get:
+      summary: specified user feed
+      parameters:
+      - name: page
+        in: query
+        description: Page. defaults to 1
+        schema:
+          type: number
+      - name: per
+        in: query
+        description: Per Page. defaults to 15
+        schema:
+          type: number
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: with credentials, successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/definitions/feed"
+        '401':
+          description: without credentials, unsuccessful
+  "/posts/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show post
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: successful
+    patch:
+      summary: update post
+      security:
+      - bearer: []
+      parameters:
+      - name: post[title]
+        in: query
+        description: post title
+        schema:
+          type: string
+      - name: post[body]
+        in: query
+        description: post body
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+        '403':
+          description: forbidden when different user
+    delete:
+      summary: delete post
+      security:
+      - bearer: []
+      responses:
+        '204':
+          description: no content
+        '403':
+          description: not authorized when different user
+  "/ratings/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: id
+      required: true
+      schema:
+        type: string
+    get:
+      summary: show rating
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: successful
+    patch:
+      summary: update rating
+      security:
+      - bearer: []
+      parameters:
+      - name: rating[rating]
+        in: query
+        description: rating
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+        '403':
+          description: forbidden when different user
+    delete:
+      summary: delete rating
+      security:
+      - bearer: []
+      responses:
+        '204':
+          description: no content
+        '403':
+          description: not authorized when different user
 servers:
 - url: http://{defaultHost}
   variables:
@@ -86,71 +222,68 @@ components:
       description: token from POST /api-keys
       type: http
       scheme: bearer
-api_key:
-  type: object
-  properties:
-    id:
-      type: number
-    user_id:
-      type: number
-    token_digest:
-      type: string
-    created_at:
-      type: string
-    updated_at:
-      type: string
-    token:
-      type: string
-api_key_collection:
-  type: array
-  items:
-    type: api_key
-feed_event:
-  type: object
-  properties:
-    id:
-      type: number
-    event_type:
-      type: string
-    title:
-      type: string
-    body:
-      type: string
-    comment_count:
-      type: number
-    link:
-      type: string
-    date:
-      type: string
-feed:
-  type: object
-  properties:
-    user:
-      type: string
-    feed_events:
-      type: array
-      items:
-        type: feed_event
-    page:
-      type: number
-    total_records:
-      type: number
-    last_page:
-      type: boolean
-comment:
-  type: object
-  properties:
-    id:
-      type: number
-    post_id:
-      type: number
-    user_id:
-      type: number
-    message:
-      type: string
-    commented_at:
-      type: string
-    created_at:
-      type: string
-    updated_at:
-      type: string
+definitions:
+  api_key:
+    type: object
+    properties:
+      id:
+        type: number
+      user_id:
+        type: number
+      token_digest:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      token:
+        type: string
+  feed_event:
+    type: object
+    properties:
+      id:
+        type: number
+      event_type:
+        type: string
+      title:
+        type: string
+      body:
+        type: string
+      comment_count:
+        type: number
+      link:
+        type: string
+      date:
+        type: string
+  feed:
+    type: object
+    properties:
+      user:
+        type: string
+      feed_events:
+        type: array
+        items:
+          type: feed_event
+      page:
+        type: number
+      total_records:
+        type: number
+      last_page:
+        type: boolean
+  comment:
+    type: object
+    properties:
+      id:
+        type: number
+      post_id:
+        type: number
+      user_id:
+        type: number
+      message:
+        type: string
+      commented_at:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string

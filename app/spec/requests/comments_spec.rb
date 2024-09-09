@@ -100,7 +100,7 @@ RSpec.describe 'comments', type: :request do
       security [bearer: []]
       
       response(204, 'no content') do              
-        let(:Authorization) { "Bearer #{@token2}" }
+        let(:Authorization) { "Bearer #{@token1}" }
         let(:id) { @comment.id }
                 
         run_test! do
@@ -109,7 +109,7 @@ RSpec.describe 'comments', type: :request do
       end
 
       response(403, 'not authorized when different user') do              
-        let(:Authorization) { "Bearer #{@token1}" }
+        let(:Authorization) { "Bearer #{@token2}" }
         let(:id) { @comment.id }
                 
         run_test! do
